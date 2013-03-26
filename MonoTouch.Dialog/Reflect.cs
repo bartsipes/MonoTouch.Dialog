@@ -30,6 +30,9 @@ namespace MonoTouch.Dialog
 
 		public string Placeholder;
 		public UIKeyboardType KeyboardType;
+		public UITextAutocorrectionType AutocorrectionType;
+		public UITextAutocapitalizationType AutocapitalizationType;
+		public UITextFieldViewMode ClearButtonMode;
 	}
 
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Property, Inherited=false)]
@@ -214,9 +217,9 @@ namespace MonoTouch.Dialog
 				object [] attrs = mi.GetCustomAttributes (false);
 				bool skip = false;
 				foreach (var attr in attrs){
-					if (attr is SkipAttribute)
+					if (attr is SkipAttribute || attr is System.Runtime.CompilerServices.CompilerGeneratedAttribute)
 						skip = true;
-					if (attr is CaptionAttribute)
+					else if (attr is CaptionAttribute)
 						caption = ((CaptionAttribute) attr).Caption;
 					else if (attr is SectionAttribute){
 						if (section != null)
@@ -275,7 +278,7 @@ namespace MonoTouch.Dialog
 					if (pa != null)
 						element = new EntryElement (caption, pa.Placeholder, value, true);
 					else if (ea != null)
-						element = new EntryElement (caption, ea.Placeholder, value) { KeyboardType = ea.KeyboardType };
+						element = new EntryElement (caption, ea.Placeholder, value) { KeyboardType = ea.KeyboardType, AutocapitalizationType = ea.AutocapitalizationType, AutocorrectionType = ea.AutocorrectionType, ClearButtonMode = ea.ClearButtonMode };
 					else if (multi)
 						element = new MultilineElement (caption, value);
 					else if (html != null)
@@ -343,7 +346,8 @@ namespace MonoTouch.Dialog
 						if (v == evalue)
 							selected = idx;
 						
-						csection.Add (new RadioElement (MakeCaption (fi.Name)));
+						CaptionAttribute ca = Attribute.GetCustomAttribute(fi, typeof(CaptionAttribute)) as CaptionAttribute;
+						csection.Add (new RadioElement (ca != null ? ca.Caption : MakeCaption (fi.Name)));
 						idx++;
 					}
 					

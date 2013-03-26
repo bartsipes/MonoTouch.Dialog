@@ -24,6 +24,7 @@
     <MtouchExtraArgs>--nostrip</MtouchExtraArgs>
     <MtouchI18n />
     <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -35,6 +36,7 @@
     <MtouchI18n />
     <MtouchSdkVersion>4.3</MtouchSdkVersion>
     <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +51,12 @@
     <MtouchLink>None</MtouchLink>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
     <MtouchUseArmv7>false</MtouchUseArmv7>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchLink>None</MtouchLink>
+    <MtouchUseArmv7>false</MtouchUseArmv7>
+    <IpaPackageName />
+    <MtouchI18n />
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -61,6 +69,7 @@
     <MtouchI18n />
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
     <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -68,6 +77,7 @@
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -101,6 +111,10 @@
     <Content Include="favorite.png" />
     <Content Include="favorited.png" />
     <Content Include="background.png" />
+    <Content Include="sample.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

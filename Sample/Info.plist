@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<<<<<<< HEAD
 	<key>CFBundleIdentifier</key>
 	<string>iiii</string>
 	<key>MinimumOSVersion</key>
@@ -10,6 +11,13 @@
 	<array>
 		<integer>1</integer>
 		<integer>2</integer>
+=======
+	<key>MinimumOSVersion</key>
+	<string>4.3</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+>>>>>>> b127494ca023a057238f26fd7bce409dfee13f01
 	</array>
 </dict>
 </plist>

@@ -17,9 +17,14 @@ using MonoTouch.Foundation;
 
 namespace MonoTouch.Dialog
 {
+	/// <summary>
+	///   The DialogViewController is the main entry point to use MonoTouch.Dialog,
+	///   it provides a simplified API to the UITableViewController.
+	/// </summary>
 	public class DialogViewController : UITableViewController
 	{
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
+		public event Action<NSIndexPath> OnSelection;
 		UISearchBar searchBar;
 		UITableView tableView;
 		RefreshTableHeaderView refreshView;
@@ -156,6 +161,14 @@ namespace MonoTouch.Dialog
 		public override void DidRotate (UIInterfaceOrientation fromInterfaceOrientation)
 		{
 			base.DidRotate (fromInterfaceOrientation);
+			
+			//Fixes the RefreshView's size if it is shown during rotation
+			if (refreshView != null) {
+				var bounds = View.Bounds;
+				
+				refreshView.Frame = new RectangleF (0, -bounds.Height, bounds.Width, bounds.Height);
+			}
+			
 			ReloadData ();
 		}
 		
@@ -266,6 +279,7 @@ namespace MonoTouch.Dialog
 			public override void CancelButtonClicked (UISearchBar searchBar)
 			{
 				searchBar.ShowsCancelButton = false;
+				container.searchBar.Text = "";
 				container.FinishSearch ();
 				searchBar.ResignFirstResponder ();
 			}
@@ -286,6 +300,14 @@ namespace MonoTouch.Dialog
 			{
 				this.Container = container;
 				Root = container.root;
+			}
+			
+			public override void AccessoryButtonTapped (UITableView tableView, NSIndexPath indexPath)
+			{
+				var section = Root.Sections [indexPath.Section];
+				var element = (section.Elements [indexPath.Row] as StyledStringElement);
+				if (element != null)
+					element.AccessoryTap ();
 			}
 			
 			public override int RowsInSection (UITableView tableview, int section)
@@ -337,6 +359,9 @@ namespace MonoTouch.Dialog
 			
 			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
 			{
+				var onSelection = Container.OnSelection;
+				if (onSelection != null)
+					onSelection (indexPath);
 				Container.Selected (indexPath);
 			}			
 			
@@ -559,6 +584,17 @@ namespace MonoTouch.Dialog
 			}
 		}
 
+		public bool Pushing {
+			get {
+				return pushing;
+			}
+			set {
+				pushing = value;
+				if (NavigationItem != null)
+					NavigationItem.HidesBackButton = !pushing;
+			}
+		}
+		
 		public virtual Source CreateSizingSource (bool unevenRows)
 		{
 			return unevenRows ? new SizingSource (this) : new Source (this);
@@ -580,6 +616,9 @@ namespace MonoTouch.Dialog
 			if (root == null)
 				return;
 			
+			if(root.Caption != null) 
+				NavigationItem.Title = root.Caption;
+			
 			root.Prepare ();
 			if (tableView != null){
 				UpdateSource ();
@@ -588,13 +627,23 @@ namespace MonoTouch.Dialog
 			dirty = false;
 		}
 		
-		public event EventHandler ViewDissapearing;
+		public event EventHandler ViewDisappearing;
+		
+		[Obsolete ("Use the ViewDisappearing event instead")]
+		public event EventHandler ViewDissapearing {
+			add {
+				ViewDisappearing += value;
+			}
+			remove {
+				ViewDisappearing -= value;
+			}
+		}
 		
 		public override void ViewWillDisappear (bool animated)
 		{
 			base.ViewWillDisappear (animated);
-			if (ViewDissapearing != null)
-				ViewDissapearing (this, EventArgs.Empty);
+			if (ViewDisappearing != null)
+				ViewDisappearing (this, EventArgs.Empty);
 		}
 		
 		public DialogViewController (RootElement root) : base (UITableViewStyle.Grouped)
@@ -630,6 +679,10 @@ namespace MonoTouch.Dialog
 			Style = style;
 			this.pushing = pushing;
 			this.root = root;
+		}
+		public DialogViewController (IntPtr handle) : base(handle)
+		{
+			this.root = new RootElement ("");
 		}
 	}
 }
